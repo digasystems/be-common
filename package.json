@@ -1,6 +1,6 @@
 {
   "name": "be-common",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Backend Common",
   "author": "Diga Systems <info@digasystems.com>",
   "main": "src/index.ts",
