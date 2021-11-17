@@ -5,7 +5,7 @@ import cors from 'cors';
 import errorHandler from "./middlewares/errorHandler";
 import noRoute from "./middlewares/noRoute";
 import { parseIp, successResponse } from "./utils/functions";
-import logger from "./logger";
+import { mainLogger } from "./logger";
 import constants from "./constants";
 
 const env = process.env.NODE_ENV || "development";
@@ -19,7 +19,7 @@ export type RouterItem = {
 
 const initializeHttp = ({ httpPort, routers }: { httpPort: number, routers: RouterItem[] }) => {
     app.use((req, res, next) => {
-        logger.info(`CALL ${req.url} from ${parseIp(req)}`)
+        mainLogger.info(`CALL ${req.url} from ${parseIp(req)}`)
         next();
     });
     app.use(cors());
@@ -38,8 +38,7 @@ const initializeHttp = ({ httpPort, routers }: { httpPort: number, routers: Rout
     }
 
     app.listen(httpPort, () => {
-        logger.info(` # Listening http requests on port ${httpPort}`)
-        logger.info("base path is ", constants.basePath)
+        mainLogger.info(`Listening http requests on port ${httpPort}`)
     })
 
 }

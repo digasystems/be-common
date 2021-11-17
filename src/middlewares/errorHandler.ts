@@ -1,11 +1,10 @@
 import { ValidationError } from 'express-validation';
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { errorResponse } from '../utils/functions';
-import logger from '../logger';
+import { mainLogger } from '../logger';
 
-// eslint-disable-next-line no-unused-vars
-const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-    logger.error(err)
+const errorHandler = (err: any, req: Request, res: Response) => {
+    mainLogger.error(err)
     if (err instanceof ValidationError) {
         const message = err?.details?.body ? err?.details?.body[0].message : "Validation error";
         return errorResponse(req, res, err, { message: message, textCode: "VALIDATION_ERROR", code: 400 });
@@ -19,7 +18,6 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
         return errorResponse(req, res, err, { message: "Validation error", textCode: "VALIDATION_ERROR", code: 400 });
     } else {
         return errorResponse(req, res, err, { message: "Generic error", textCode: "GENERIC_ERROR", code: 400 });
-        //return errorResponse(req, res, "Generic error", "GENERIC_ERROR", 400, err);
     }
 };
 

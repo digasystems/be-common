@@ -1,6 +1,6 @@
 import nodemailer, { Transporter } from "nodemailer"
 import ejs from "ejs";
-import logger from "../../logger";
+import { mainLogger } from "../../logger";
 
 export var mailer: Mailer;
 
@@ -12,8 +12,8 @@ export default class Mailer {
         if (!config) {
             nodemailer.createTestAccount((err, account) => {
                 if (err) {
-                    logger.error('Failed to create a testing account for mailer');
-                    logger.error(err)
+                    mainLogger.error('Failed to create a testing account for mailer');
+                    mainLogger.error(err)
                     return process.exit(1);
                 }
                 this.transporter = nodemailer.createTransport(
@@ -37,12 +37,12 @@ export default class Mailer {
             this.transporter = nodemailer.createTransport(config);
         }
         Object.freeze(this.transporter);
-        logger.info("Nodemailer initialized...")
+        mainLogger.info("Nodemailer initialized...")
     }
 
     static getInstance() {
         if (!mailer) {
-            logger.error("MAILER NOT FOUND!")
+            mainLogger.error("MAILER NOT FOUND!")
         }
         return mailer;
     }
@@ -62,14 +62,14 @@ export default class Mailer {
             };
 
             return this.transporter?.sendMail(mailOptions, (error, info) => {
-                if (error) logger.info(error + "\n");
+                if (error) mainLogger.info(error + "\n");
                 else {
-                    logger.info("An Email has been sent to " + emailAddress);
-                    logger.info(nodemailer.getTestMessageUrl(info));
+                    mainLogger.info("An Email has been sent to " + emailAddress);
+                    mainLogger.info(nodemailer.getTestMessageUrl(info));
                 }
             })
         } catch (error) {
-            logger.info("Could not send email: " + error);
+            mainLogger.info("Could not send email: " + error);
         }
     }
 }

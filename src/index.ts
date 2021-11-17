@@ -1,15 +1,11 @@
 import constants from "./constants";
 import initializeHttp, { app, RouterItem } from "./express";
-import logger from "./logger";
+import * as loggers from "./logger";
+import * as functions from "./utils/functions";
+import Mailer from "./utils/mailer/index";
 
-const initialize = ({ httpPort, routers }: {
-    httpPort: number,
-    routers: RouterItem[]
-}) => {
-    logger.info("base path is ", constants.basePath)
+const initialize = ({ httpPort, routers }: { httpPort: number, routers: RouterItem[] }) => {
     initializeHttp({ httpPort, routers });
 }
 
-
-
-export { initialize, app, logger };
+export { initialize, app, loggers, functions, Mailer, constants };
