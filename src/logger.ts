@@ -8,7 +8,6 @@ const rotateImportsLogsOptions = { filename: (path.join(process.cwd(), "./logs/"
 const rotateQueriesLogsOptions = { filename: (path.join(process.cwd(), "./logs/") + "queries-%DATE%.log"), datePattern: 'YYYY-MM-DD-HH', maxSize: '20m', maxFiles: '14d' }
 
 export const mainLogger = createLogger({
-    level: 'info',
     format: format.combine(
         format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
         format.align(),
@@ -21,7 +20,6 @@ export const mainLogger = createLogger({
 });
 
 export const importsLogger = createLogger({
-    level: 'info',
     format: format.combine(
         format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
         format.align(),
@@ -33,7 +31,6 @@ export const importsLogger = createLogger({
 });
 
 export const actionsLogger = createLogger({
-    level: 'info',
     format: format.combine(
         format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
         format.align(),
@@ -46,7 +43,6 @@ export const actionsLogger = createLogger({
 });
 
 export const queriesLogger = createLogger({
-    level: 'info',
     format: format.combine(
         format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
         format.align(),

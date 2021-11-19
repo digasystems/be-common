@@ -1,10 +1,9 @@
 import { ValidationError } from 'express-validation';
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { errorResponse } from '../utils/functions';
 import { mainLogger } from '../logger';
 
-const errorHandler = (err: any, req: Request, res: Response) => {
-    mainLogger.error(err)
+const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => { // do not remove unused next otherwise it breaks
     if (err instanceof ValidationError) {
         const message = err?.details?.body ? err?.details?.body[0].message : "Validation error";
         return errorResponse(req, res, err, { message: message, textCode: "VALIDATION_ERROR", code: 400 });

@@ -18,12 +18,12 @@ export type RouterItem = {
 }
 
 const initializeHttp = ({ httpPort, routers }: { httpPort: number, routers: RouterItem[] }) => {
+    app.use(cors());
+    app.use(express.json({ limit: "100mb" }));
     app.use((req, res, next) => {
         mainLogger.info(`CALL ${req.url} from ${parseIp(req)}`)
         next();
     });
-    app.use(cors());
-    app.use(express.json({ limit: "100mb" }));
 
     app.all('/', (req, res) => successResponse(req, res, process.env.APP_NAME));
     routers.forEach((r) => {

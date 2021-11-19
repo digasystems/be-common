@@ -11,7 +11,10 @@ export const successResponse = (req: Request, res: Response, data?: any, code = 
 };
 
 export const errorResponse = (req: Request, res: Response, error: any = {}, options?: errOptions,) => {
-    res.status(options?.code || 500).json({
+    mainLogger.error(`ERROR ${error?.code || 500} ${error?.name || ""} ${error?.name || ""} ${error?.message || ""}`);
+    console.log(error, options) // winston sucks and does not display errors stack
+
+    res?.status(options?.code || 500).json({
         code: options?.code || 500,
         message: options?.message || error?.message,
         textCode: options?.textCode || error?.code,
@@ -19,7 +22,7 @@ export const errorResponse = (req: Request, res: Response, error: any = {}, opti
         details: error?.details,
         success: false,
     })
-    return res.send();
+    return res?.send();
 };
 
 export const validateFields = (object: { [x: string]: any; }, fields: any[]) => {
