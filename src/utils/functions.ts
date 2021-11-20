@@ -7,13 +7,15 @@ import { Sequelize, Op } from "sequelize";
 type errOptions = { message?: string, textCode?: string, code?: number, data?: any, }
 
 export const successResponse = (req: Request, res: Response, data?: any, code = 200) => {
-    return res.status(code).send(data);
+
+    return res?.status(code).json({ code: 200, data: data, success: true, })
 };
 
 export const errorResponse = (req: Request, res: Response, error: any = {}, options?: errOptions,) => {
-    mainLogger.error(`ERROR ${error?.code || 500} ${error?.name || ""} ${error?.name || ""} ${error?.message || ""}`);
-    console.log(error, options) // winston sucks and does not display errors stack
-
+    mainLogger.error(`ERROR ${error?.code || 500} ${error?.name || ""} ${error?.message || ""}`);
+    if (error?.code == 500 || options?.code == 500) {
+        console.log(error, options) // winston sucks and does not display errors stack
+    }
     res?.status(options?.code || 500).json({
         code: options?.code || 500,
         message: options?.message || error?.message,

@@ -2,8 +2,9 @@ import nodemailer, { Transporter } from "nodemailer"
 import ejs from "ejs";
 import { mainLogger } from "../../logger";
 
-export var mailer: Mailer;
+const url = "//localhost:4200/verify";
 
+export var mailer: Mailer;
 export default class Mailer {
     transporter: undefined | Transporter;
 
@@ -52,7 +53,7 @@ export default class Mailer {
     }
 
     async sendEmail(emailAddress: string, emailSubject: string, emailTemplate: string, emailData: Object) {
-        const data = await ejs.renderFile(__dirname + `/templates/${emailTemplate}.ejs`, emailData);
+        const data = await ejs.renderFile(__dirname + `/templates/${emailTemplate}.ejs`, { ...emailData, url });
         try {
             let mailOptions = {
                 subject: emailSubject,
