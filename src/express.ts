@@ -6,7 +6,6 @@ import errorHandler from "./middlewares/errorHandler";
 import noRoute from "./middlewares/noRoute";
 import { parseIp, successResponse } from "./utils/functions";
 import { mainLogger } from "./logger";
-import constants from "./constants";
 
 const env = process.env.NODE_ENV || "development";
 
@@ -17,7 +16,12 @@ export type RouterItem = {
     middlewares?: any[],
 }
 
-const initializeHttp = ({ httpPort, routers }: { httpPort: number, routers: RouterItem[] }) => {
+const initializeHttp = ({ httpPort, routers, httpServer }: { httpPort: number, routers: RouterItem[], httpServer: any }) => {
+    if (env === "production") {
+        app.use(compression());
+        app.use(helmet());
+    }
+
     app.use(cors());
     app.use(express.json({ limit: "100mb" }));
     app.use((req, res, next) => {
@@ -32,14 +36,9 @@ const initializeHttp = ({ httpPort, routers }: { httpPort: number, routers: Rout
     app.use(errorHandler);
     app.use(noRoute);
 
-    if (env === "production") {
-        app.use(compression());
-        app.use(helmet());
-    }
-
-    app.listen(httpPort, () => {
+    /* app.listen(httpPort, () => {
         mainLogger.info(`Listening http requests on port ${httpPort}`)
-    })
+    }) */
 
 }
 
