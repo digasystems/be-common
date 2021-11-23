@@ -1,5 +1,2 @@
-declare const constants: {
-    privateKEY: string;
-    publicKEY: string;
-};
+declare const constants: {};
 export default constants;
