@@ -3,7 +3,7 @@
   "version": "1.0.2",
   "description": "Backend Common",
   "author": "Diga Systems <info@digasystems.com>",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "start": "npx nodemon",
     "build": "npx tsc"

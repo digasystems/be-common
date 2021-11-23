@@ -13,12 +13,13 @@
     "isolatedModules": true,
     "noEmit": false,
     "jsx": "react",
-    "outDir": "build",
+    "outDir": "dist",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "noImplicitAny": false,
-    "removeComments": true
+    "removeComments": true,
+    "declaration": true
   },
   "include": [
     ".",
