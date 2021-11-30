@@ -27,18 +27,18 @@ const constants_1 = __importDefault(require("./constants"));
 exports.constants = constants_1.default;
 const express_1 = __importStar(require("./express"));
 Object.defineProperty(exports, "app", { enumerable: true, get: function () { return express_1.app; } });
-const socketio_1 = __importStar(require("./socketio"));
-Object.defineProperty(exports, "io", { enumerable: true, get: function () { return socketio_1.io; } });
 const loggers = __importStar(require("./logger"));
 exports.loggers = loggers;
+const logger_1 = require("./logger");
+const socketio_1 = __importStar(require("./socketio"));
+Object.defineProperty(exports, "io", { enumerable: true, get: function () { return socketio_1.io; } });
 const functions = __importStar(require("./utils/functions"));
 exports.functions = functions;
 const index_1 = __importDefault(require("./utils/mailer/index"));
 exports.Mailer = index_1.default;
-const logger_1 = require("./logger");
-const httpServer = require('http').createServer(express_1.app);
-const initialize = ({ httpPort, routers }) => {
-    (0, express_1.default)({ httpPort, routers, httpServer });
+const initialize = ({ httpPort, routers, ssl, docs }) => {
+    const httpServer = (ssl?.active ? require('https') : require('http')).createServer(express_1.app);
+    (0, express_1.default)({ httpPort, routers, httpServer, docs });
     (0, socketio_1.default)({ httpServer });
     httpServer.listen(httpPort, () => {
         logger_1.mainLogger.info(`Listening http requests on port ${httpPort}`);

@@ -4,9 +4,10 @@ export declare type RouterItem = {
     router: Router;
     middlewares?: any[];
 };
-declare const initializeHttp: ({ httpPort, routers, httpServer }: {
+declare const initializeHttp: ({ httpPort, routers, httpServer, docs }: {
     httpPort: number;
     routers: RouterItem[];
     httpServer: any;
+    docs: any;
 }) => void;
 export default initializeHttp;

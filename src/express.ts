@@ -6,6 +6,9 @@ import errorHandler from "./middlewares/errorHandler";
 import noRoute from "./middlewares/noRoute";
 import { parseIp, successResponse } from "./utils/functions";
 import { mainLogger } from "./logger";
+import path from "path";
+import initializeDocs from "./docs";
+
 
 const env = process.env.NODE_ENV || "development";
 
@@ -16,7 +19,7 @@ export type RouterItem = {
     middlewares?: any[],
 }
 
-const initializeHttp = ({ httpPort, routers, httpServer }: { httpPort: number, routers: RouterItem[], httpServer: any }) => {
+const initializeHttp = ({ httpPort, routers, httpServer, docs }: { httpPort: number, routers: RouterItem[], httpServer: any, docs: any }) => {
     if (env === "production") {
         app.use(compression());
         app.use(helmet());
@@ -29,7 +32,20 @@ const initializeHttp = ({ httpPort, routers, httpServer }: { httpPort: number, r
         next();
     });
 
-    app.all('/', (req, res) => successResponse(req, res, process.env.APP_NAME));
+    /**
+     * @openapi
+     * /:
+     *   get:
+     *     description: Api main endpoint
+     *     responses:
+     *       200:
+     *         description: Returns a success repsonse
+     */
+    app.all('/', (req, res) => successResponse(req, res, process.env.APP_NAME + " " + docs?.version));
+
+    app.use('/logs', express.static(path.join(__dirname, "./assets/html/")));
+    initializeDocs(app, { title: docs?.title || "test-title", version: docs?.version || "1.0.0", apis: docs.apis })
+
     routers.forEach((r) => {
         app.use(...(r.middlewares || []), r.router);
     })
