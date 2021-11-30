@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>tail.js</title>
+    <title>Logs</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.js"
@@ -14,11 +14,13 @@
             font-family: 'Helvetica', sans-serif;
             font-size: 86%;
             padding: 1em;
+            background: #0A090C;
         }
 
         .info {
             font-size: 120%;
             font-weight: bold;
+            color: white;
         }
 
         .tail {
@@ -28,6 +30,7 @@
             overflow: hidden;
             position: relative;
             overflow-y: scroll;
+            color: white;
         }
     </style>
 
@@ -56,15 +59,20 @@
 
             console.log('Received message:', message);
             if (message.filename && !message.tail) {
-                $("#cont").append(`<pre id="info-${code}" class="info">
-                    $ tail -f "${message.filename}"
-                    </pre><pre id="tail-${code}" class="tail"></pre>`)
+                if (!$(`#info-${code}`).length)
+                    $("#cont").append(`<pre id="info-${code}" class="info">$ tail -f "${message.filename}"</pre><pre id="tail-${code}" class="tail"></pre>`);
             };
+
             if (message.tail) {
                 const tailCont = $(`#tail-${code}`)
-                tailCont.html(tailCont.html() + "<br/>" + message.tail);
-                bottom = tailCont[0].scrollHeight - tailCont.height()
-                tailCont.scrollTop(bottom);
+                if (tailCont.html().length > 5000) {
+                    const newHTML = tailCont.html().substring(tailCont.html().length / 2, tailCont.html().length)
+                    tailCont.html(newHTML.substring(newHTML.indexOf("<br>"), newHTML.length) + "<br/>" + message.tail);
+                } else {
+                    tailCont.html(tailCont.html() + "<br/>" + message.tail);
+                }
+                // bottom = tailCont[0].scrollHeight - tailCont.height()
+                // tailCont.scrollTop(bottom);
             }
         });
     </script>

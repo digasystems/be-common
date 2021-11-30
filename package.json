@@ -1,13 +1,13 @@
 {
   "name": "be-common",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Backend Common",
   "author": "Diga Systems <info@digasystems.com>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "npx nodemon",
-    "build": "npx tsc && npx copyfiles './src/assets/**/*' ./dist/assets/ -u 2"
+    "build": "npx rimraf ./dist/assets/* && npx tsc && npx copyfiles './src/assets/**/*' ./dist/assets/ -u 2"
   },
   "dependencies": {
     "compression": "^1.7.4",
@@ -22,6 +22,7 @@
     "joi": "^17.4.2",
     "lodash": "^4.17.21",
     "nodemailer": "^6.6.3",
+    "rimraf": "^3.0.2",
     "sequelize": "^6.9.0",
     "socket.io": "^4.4.0",
     "swagger-jsdoc": "^6.1.0",
