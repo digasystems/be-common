@@ -29,18 +29,4 @@ export declare function getPagination(options: {
     include?: any;
     filters?: any;
 }): Promise<any>;
-export declare const sanitizeUser: (user: any) => {
-    id: any;
-    firstName: any;
-    lastName: any;
-    email: any;
-    phone: any;
-    isVerified: any;
-    isAdmin: any;
-    Roles: any;
-    Permissions: any;
-    createdAt: any;
-    profilePicture: string;
-    displayName: string;
-};
 export {};

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sanitizeUser = exports.getPagination = exports.parseIp = exports.decryptMiddleware = exports.cryptMiddleware = exports.uniqueId = exports.CustomError = exports.validateFields = exports.errorResponse = exports.successResponse = void 0;
+exports.getPagination = exports.parseIp = exports.decryptMiddleware = exports.cryptMiddleware = exports.uniqueId = exports.CustomError = exports.validateFields = exports.errorResponse = exports.successResponse = void 0;
 const crypto_1 = require("crypto");
 const logger_1 = require("../logger");
 const date_fns_1 = require("date-fns");
@@ -177,21 +177,3 @@ async function getPagination(options) {
     return list;
 }
 exports.getPagination = getPagination;
-const sanitizeUser = (user) => {
-    const profilePicture = `data:image/jpeg;base64,${Buffer.from(user?.profilePicture || "").toString('base64')}` || "";
-    return {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone,
-        isVerified: user.isVerified,
-        isAdmin: user.isAdmin,
-        Roles: user.Roles?.map((role) => role?.get()?.name),
-        Permissions: user.Permissions?.map((perm) => perm?.get()?.name),
-        createdAt: user.createdAt,
-        profilePicture,
-        displayName: user.firstName + " " + user.lastName,
-    };
-};
-exports.sanitizeUser = sanitizeUser;

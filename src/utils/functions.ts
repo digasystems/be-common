@@ -187,24 +187,3 @@ export async function getPagination(options:
 
     return list;
 }
-
-export const sanitizeUser = (user) => {
-    const profilePicture = `data:image/jpeg;base64,${Buffer.from(user?.profilePicture || "").toString('base64')}` || "";
-
-    return {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone,
-        isVerified: user.isVerified,
-        isAdmin: user.isAdmin,
-        Roles: user.Roles?.map((role) => role?.get()?.name),
-        Permissions: user.Permissions?.map((perm) => perm?.get()?.name),
-        createdAt: user.createdAt,
-        profilePicture,
-        //others
-        displayName: user.firstName + " " + user.lastName,
-    }
-
-}
