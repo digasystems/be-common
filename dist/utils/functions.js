@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPagination = exports.parseIp = exports.decryptMiddleware = exports.cryptMiddleware = exports.uniqueId = exports.CustomError = exports.validateFields = exports.errorResponse = exports.successResponse = void 0;
+exports.getPaginationDataGridPro = exports.getPagination = exports.parseIp = exports.decryptMiddleware = exports.cryptMiddleware = exports.uniqueId = exports.CustomError = exports.validateFields = exports.errorResponse = exports.successResponse = void 0;
 const crypto_1 = require("crypto");
 const logger_1 = require("../logger");
 const date_fns_1 = require("date-fns");
@@ -11,8 +11,6 @@ const successResponse = (req, res, data, code = 200) => {
 exports.successResponse = successResponse;
 const errorResponse = (req, res, error = {}, options) => {
     logger_1.mainLogger.error(`ERROR ${error?.code || 500} ${error?.name || ""} ${error?.message || ""}`);
-    console.log(error?.code, options?.code);
-    console.log(error, options);
     if ((!error?.code && !options?.code) || error?.code == 500 || options?.code == 500) {
         console.log(error, options);
     }
@@ -179,3 +177,100 @@ async function getPagination(options) {
     return list;
 }
 exports.getPagination = getPagination;
+async function getPaginationDataGridPro(options) {
+    const { models, model, page, limit, sorting, globalFilter, include, filters } = options;
+    let sortBySeq = [];
+    if (sorting?.length) {
+        for (const s of sorting) {
+            if (s.field.includes(".")) {
+                const modelName = s.field.split('.')[0];
+                const fieldId = s.field.split('.')[1];
+                const actualModel = models[modelName];
+                const assocAlias = s.associationAlias || modelName;
+                if (actualModel)
+                    sortBySeq.push([{ model: actualModel, as: assocAlias }, fieldId, s.sort]);
+                else
+                    sortBySeq.push([sequelize_1.Sequelize.literal(`${s.field}`), s.sort]);
+            }
+            else
+                sortBySeq.push([s.field, s.sort]);
+        }
+    }
+    const globalFilterWhere = Object.keys(model.rawAttributes).filter((attr, index) => {
+        const type = model.rawAttributes[attr].type.key;
+        if (type === "STRING" || type === "INTEGER")
+            return true;
+        else
+            return false;
+    }).reduce((acc, obj) => {
+        if (globalFilter && globalFilter !== "" && globalFilter.trim() !== "") {
+            acc.push({ [obj]: { [sequelize_1.Op.like]: `%${globalFilter}%` } });
+            return acc;
+        }
+    }, []);
+    let filtersWhere;
+    if (filters && filters?.items?.length) {
+        let linkOp = sequelize_1.Op.or;
+        if (filters.linkOperator == "and")
+            linkOp = sequelize_1.Op.and;
+        filtersWhere = {
+            [linkOp]: filters?.items?.map((item) => {
+                let prefix = "", suffix = "";
+                let eqOperator = sequelize_1.Op.like;
+                switch (item.operatorValue) {
+                    case "isNotEmpty":
+                        return { [item.columnField]: { [sequelize_1.Op.or]: [{ [sequelize_1.Op.not]: null }, { [sequelize_1.Op.ne]: "" }] } };
+                    case "isEmpty":
+                        return { [item.columnField]: { [sequelize_1.Op.or]: [{ [sequelize_1.Op.is]: null }, { [sequelize_1.Op.eq]: "" }] } };
+                    case "startsWith":
+                        eqOperator = sequelize_1.Op.like;
+                        prefix = "%";
+                        suffix = "";
+                        break;
+                    case "startsWith":
+                        eqOperator = sequelize_1.Op.like;
+                        prefix = "%";
+                        suffix = "";
+                        break;
+                    case "endsWith":
+                        eqOperator = sequelize_1.Op.like;
+                        prefix = "%";
+                        suffix = "";
+                        break;
+                    case "contains":
+                        eqOperator = sequelize_1.Op.like;
+                        prefix = "%";
+                        suffix = "%";
+                        break;
+                    case "equals":
+                        eqOperator = sequelize_1.Op.eq;
+                        prefix = "";
+                        suffix = "";
+                        break;
+                    default:
+                        eqOperator = sequelize_1.Op.like;
+                        prefix = "%";
+                        suffix = "%";
+                        break;
+                }
+                return { [item.columnField]: { [eqOperator]: `${prefix}${item.value}${suffix}` } };
+            })
+        };
+    }
+    let where;
+    if (filtersWhere && globalFilterWhere)
+        where = { [sequelize_1.Op.and]: [{ [sequelize_1.Op.and]: filtersWhere }, { [sequelize_1.Op.or]: [...globalFilterWhere] }] };
+    else if (filtersWhere)
+        where = { [sequelize_1.Op.and]: filtersWhere };
+    else if (globalFilterWhere)
+        where = { [sequelize_1.Op.or]: [...globalFilterWhere] };
+    const list = await model.findAndCountAll({
+        order: sortBySeq,
+        offset: (page - 1) * limit,
+        limit: limit > 500 ? 500 : limit,
+        where,
+        include,
+    });
+    return list;
+}
+exports.getPaginationDataGridPro = getPaginationDataGridPro;

@@ -29,4 +29,14 @@ export declare function getPagination(options: {
     include?: any;
     filters?: any;
 }): Promise<any>;
+export declare function getPaginationDataGridPro(options: {
+    models: any;
+    model: any;
+    page: number;
+    limit: number;
+    sorting: any;
+    globalFilter: string;
+    include?: any;
+    filters?: any;
+}): Promise<any>;
 export {};

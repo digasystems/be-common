@@ -187,3 +187,109 @@ export async function getPagination(options:
 
     return list;
 }
+
+
+
+
+export async function getPaginationDataGridPro(options: { models: any, model: any, page: number, limit: number, sorting: any, globalFilter: string, include?: any, filters?: any }) {
+    const { models, model, page, limit, sorting, globalFilter, include, filters } = options;
+
+    let sortBySeq: any = [];
+    if (sorting?.length) {
+        for (const s of sorting) {
+            if (s.field.includes(".")) {
+                const modelName: keyof typeof models = s.field.split('.')[0];
+                const fieldId = s.field.split('.')[1];
+                const actualModel: any = models[modelName];
+                const assocAlias = s.associationAlias || modelName;
+                if (actualModel) sortBySeq.push([{ model: actualModel, as: assocAlias }, fieldId, s.sort]);
+                else sortBySeq.push([Sequelize.literal(`${s.field}`), s.sort]);
+            } else
+                sortBySeq.push([s.field, s.sort]);
+        }
+    }
+
+    const globalFilterWhere: any = Object.keys(model.rawAttributes).filter((attr, index) => {
+        const type = model.rawAttributes[attr].type.key;
+        if (type === "STRING" || type === "INTEGER") return true;
+        else return false;
+    }).reduce((acc: any, obj: any) => {
+        if (globalFilter && globalFilter !== "" && globalFilter.trim() !== "") {
+            acc.push({ [obj]: { [Op.like]: `%${globalFilter}%` } });
+            return acc;
+        }
+    }, []);
+
+    let filtersWhere: any;
+    if (filters && filters?.items?.length) {
+        let linkOp = Op.or;
+        if (filters.linkOperator == "and") linkOp = Op.and;
+
+        filtersWhere = {
+            [linkOp]: filters?.items?.map((item) => {
+                let prefix = "", suffix = "";
+                let eqOperator = Op.like;
+
+                switch (item.operatorValue) {
+                    case "isNotEmpty":
+                        return { [item.columnField]: { [Op.or]: [{ [Op.not]: null }, { [Op.ne]: "" }] } };
+                    case "isEmpty":
+                        return { [item.columnField]: { [Op.or]: [{ [Op.is]: null }, { [Op.eq]: "" }] } };
+                    case "startsWith":
+                        eqOperator = Op.like
+                        prefix = "%";
+                        suffix = "";
+                        break;
+                    case "startsWith":
+                        eqOperator = Op.like
+                        prefix = "%";
+                        suffix = "";
+                        break;
+                    case "endsWith":
+                        eqOperator = Op.like
+                        prefix = "%";
+                        suffix = "";
+                        break;
+                    case "contains":
+                        eqOperator = Op.like
+                        prefix = "%";
+                        suffix = "%";
+                        break;
+                    case "equals":
+                        eqOperator = Op.eq
+                        prefix = "";
+                        suffix = "";
+                        break;
+                    default:
+                        eqOperator = Op.like
+                        prefix = "%";
+                        suffix = "%";
+                        break;
+                }
+
+                return { [item.columnField]: { [eqOperator]: `${prefix}${item.value}${suffix}` } };
+            })
+
+        }
+    }
+
+    let where: any;
+    if (filtersWhere && globalFilterWhere)
+        where = { [Op.and]: [{ [Op.and]: filtersWhere }, { [Op.or]: [...globalFilterWhere] }] };
+    else if (filtersWhere)
+        where = { [Op.and]: filtersWhere };
+    else if (globalFilterWhere)
+        where = { [Op.or]: [...globalFilterWhere] };
+
+
+    const list = await model.findAndCountAll({
+        order: sortBySeq,
+        offset: (page - 1) * limit,
+        limit: limit > 500 ? 500 : limit,
+        where,
+        include,
+    });
+
+
+    return list;
+}
