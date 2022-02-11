@@ -23,6 +23,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.io = exports.constants = exports.Mailer = exports.functions = exports.loggers = exports.app = exports.initialize = void 0;
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const constants_1 = __importDefault(require("./constants"));
 exports.constants = constants_1.default;
 const express_1 = __importStar(require("./express"));
@@ -37,7 +39,33 @@ exports.functions = functions;
 const index_1 = __importDefault(require("./utils/mailer/index"));
 exports.Mailer = index_1.default;
 const initialize = ({ httpPort, routers, ssl, docs }) => {
-    const httpServer = (ssl?.active ? require('https') : require('http')).createServer(express_1.app);
+    const options = {};
+    if (ssl?.active == "false")
+        ssl.active = false;
+    if (ssl?.active) {
+        try {
+            try {
+                options.key = fs_1.default.readFileSync(path_1.default.join(process.cwd(), './key.pem'));
+                options.cert = fs_1.default.readFileSync(path_1.default.join(process.cwd(), './cert.pem'));
+                options.pfx = fs_1.default.readFileSync(path_1.default.join(process.cwd(), './cert.pfx'));
+                options.passphrase = ssl?.passphrase;
+                logger_1.mainLogger.info("Certificato SSL ok");
+                logger_1.mainLogger.info(path_1.default.join(process.cwd(), './cert.pfx'));
+            }
+            catch (e) {
+                if (!options.key && !options.cert && !options.pfx) {
+                    logger_1.mainLogger.error("Certificato SSL non trovato");
+                    throw Error("No certificate found! Expected locations: ./cert.pfx, ./cert.pem', ./key.pem'");
+                }
+            }
+        }
+        catch (e) {
+            logger_1.mainLogger.warn(e);
+            options.pfx = null;
+            options.passphrase = null;
+        }
+    }
+    const httpServer = (ssl?.active ? require('https') : require('http')).createServer(options, express_1.app);
     (0, express_1.default)({ httpPort, routers, httpServer, docs });
     (0, socketio_1.default)({ httpServer });
     httpServer.listen(httpPort, () => {
