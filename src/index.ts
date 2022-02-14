@@ -11,23 +11,29 @@ import Mailer from "./utils/mailer/index";
 const initialize = ({ httpPort, routers, ssl, docs }: { httpPort: number, routers: RouterItem[], ssl: any, docs?: any }) => {
     const options: any = {};
     if (ssl?.active == "false") ssl.active = false;
+    else ssl.active = true;
 
     if (ssl?.active) {
         try {
-            try {
+            let check = false;
+            if (fs.existsSync(path.join(process.cwd(), './key.pem'))) {
+                check = true;
                 options.key = fs.readFileSync(path.join(process.cwd(), './key.pem'));
-                options.cert = fs.readFileSync(path.join(process.cwd(), './cert.pem'));
-                options.pfx = fs.readFileSync(path.join(process.cwd(), './cert.pfx'));
-                options.passphrase = ssl?.passphrase;
-                mainLogger.info("Certificato SSL ok");
-                mainLogger.info(path.join(process.cwd(), './cert.pfx'));
-            } catch (e) {
-                if (!options.key && !options.cert && !options.pfx) {
-                    mainLogger.error("Certificato SSL non trovato");
-
-                    throw Error("No certificate found! Expected locations: ./cert.pfx, ./cert.pem', ./key.pem'")
-                }
             }
+            if (fs.existsSync(path.join(process.cwd(), './cert.pem'))) {
+                check = true;
+                options.cert = fs.readFileSync(path.join(process.cwd(), './cert.pem'));
+            }
+            if (fs.existsSync(path.join(process.cwd(), './cert.pfx'))) {
+                check = true;
+                options.pfx = fs.readFileSync(path.join(process.cwd(), './cert.pfx'));
+            }
+            options.passphrase = ssl?.passphrase;
+            if (!check) throw Error("No certificate found! Expected locations: ./cert.pfx, ./cert.pem', ./key.pem'")
+
+            mainLogger.info("Certificato SSL ok");
+            mainLogger.info(path.join(process.cwd(), './cert.pfx'));
+
         } catch (e) {
             mainLogger.warn(e);
             options.pfx = null;

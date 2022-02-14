@@ -42,22 +42,28 @@ const initialize = ({ httpPort, routers, ssl, docs }) => {
     const options = {};
     if (ssl?.active == "false")
         ssl.active = false;
+    else
+        ssl.active = true;
     if (ssl?.active) {
         try {
-            try {
+            let check = false;
+            if (fs_1.default.existsSync(path_1.default.join(process.cwd(), './key.pem'))) {
+                check = true;
                 options.key = fs_1.default.readFileSync(path_1.default.join(process.cwd(), './key.pem'));
+            }
+            if (fs_1.default.existsSync(path_1.default.join(process.cwd(), './cert.pem'))) {
+                check = true;
                 options.cert = fs_1.default.readFileSync(path_1.default.join(process.cwd(), './cert.pem'));
+            }
+            if (fs_1.default.existsSync(path_1.default.join(process.cwd(), './cert.pfx'))) {
+                check = true;
                 options.pfx = fs_1.default.readFileSync(path_1.default.join(process.cwd(), './cert.pfx'));
-                options.passphrase = ssl?.passphrase;
-                logger_1.mainLogger.info("Certificato SSL ok");
-                logger_1.mainLogger.info(path_1.default.join(process.cwd(), './cert.pfx'));
             }
-            catch (e) {
-                if (!options.key && !options.cert && !options.pfx) {
-                    logger_1.mainLogger.error("Certificato SSL non trovato");
-                    throw Error("No certificate found! Expected locations: ./cert.pfx, ./cert.pem', ./key.pem'");
-                }
-            }
+            options.passphrase = ssl?.passphrase;
+            if (!check)
+                throw Error("No certificate found! Expected locations: ./cert.pfx, ./cert.pem', ./key.pem'");
+            logger_1.mainLogger.info("Certificato SSL ok");
+            logger_1.mainLogger.info(path_1.default.join(process.cwd(), './cert.pfx'));
         }
         catch (e) {
             logger_1.mainLogger.warn(e);
