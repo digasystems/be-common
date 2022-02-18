@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
 import { createCipheriv, createDecipheriv } from "crypto";
-import { mainLogger } from "../logger";
 import { endOfDay, startOfDay } from "date-fns";
-import { Sequelize, Op } from "sequelize";
+import { Request, Response } from "express";
+import { Op, Sequelize } from "sequelize";
+import { mainLogger } from "../logger";
 
 type errOptions = { message?: string, textCode?: string, code?: number, data?: any, }
 
@@ -280,7 +280,6 @@ export async function getPaginationDataGridPro(options: { models: any, model: an
         where = { [Op.and]: filtersWhere };
     else if (globalFilterWhere)
         where = { [Op.or]: [...globalFilterWhere] };
-
 
     const list = await model.findAndCountAll({
         order: sortBySeq,

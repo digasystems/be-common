@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPaginationDataGridPro = exports.getPagination = exports.parseIp = exports.decryptMiddleware = exports.cryptMiddleware = exports.uniqueId = exports.CustomError = exports.validateFields = exports.errorResponse = exports.successResponse = void 0;
 const crypto_1 = require("crypto");
-const logger_1 = require("../logger");
 const date_fns_1 = require("date-fns");
 const sequelize_1 = require("sequelize");
+const logger_1 = require("../logger");
 const successResponse = (req, res, data, code = 200) => {
     return res?.status(code).json({ code: 200, data: data, success: true, });
 };
