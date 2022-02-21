@@ -13,6 +13,8 @@ const errorResponse = (req, res, error = {}, options) => {
     logger_1.mainLogger.error(`ERROR ${error?.code || 500} ${error?.name || ""} ${error?.message || ""}`);
     if ((!error?.code && !options?.code) || error?.code == 500 || options?.code == 500) {
         console.log(error, options);
+        logger_1.mainLogger.error(error);
+        logger_1.mainLogger.error(options);
     }
     res?.status(options?.code || 500).json({
         code: options?.code || 500,
@@ -178,11 +180,11 @@ async function getPagination(options) {
 }
 exports.getPagination = getPagination;
 async function getPaginationDataGridPro(options) {
-    const { models, model, page, limit, sorting, globalFilter, include, filters } = options;
+    const { models, model, page, limit, sorting, globalFilter, include, filters, group } = options;
     let sortBySeq = [];
     if (sorting?.length) {
         for (const s of sorting) {
-            if (s.field.includes(".")) {
+            if (s?.field?.includes(".")) {
                 const modelName = s.field.split('.')[0];
                 const fieldId = s.field.split('.')[1];
                 const actualModel = models[modelName];
@@ -270,6 +272,8 @@ async function getPaginationDataGridPro(options) {
         limit: limit > 500 ? 500 : limit,
         where,
         include,
+        group,
+        ...options?.others,
     });
     return list;
 }

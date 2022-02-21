@@ -38,5 +38,7 @@ export declare function getPaginationDataGridPro(options: {
     globalFilter: string;
     include?: any;
     filters?: any;
+    group?: any;
+    others?: any;
 }): Promise<any>;
 export {};

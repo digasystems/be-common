@@ -15,6 +15,8 @@ export const errorResponse = (req: Request, res: Response, error: any = {}, opti
     mainLogger.error(`ERROR ${error?.code || 500} ${error?.name || ""} ${error?.message || ""}`);
     if ((!error?.code && !options?.code) || error?.code == 500 || options?.code == 500) {
         console.log(error, options) // winston sucks and does not display errors stack
+        mainLogger.error(error)
+        mainLogger.error(options)
     }
     res?.status(options?.code || 500).json({
         code: options?.code || 500,
@@ -191,13 +193,13 @@ export async function getPagination(options:
 
 
 
-export async function getPaginationDataGridPro(options: { models: any, model: any, page: number, limit: number, sorting: any, globalFilter: string, include?: any, filters?: any }) {
-    const { models, model, page, limit, sorting, globalFilter, include, filters } = options;
+export async function getPaginationDataGridPro(options: { models: any, model: any, page: number, limit: number, sorting: any, globalFilter: string, include?: any, filters?: any, group?: any, others?: any }) {
+    const { models, model, page, limit, sorting, globalFilter, include, filters, group } = options;
 
     let sortBySeq: any = [];
     if (sorting?.length) {
         for (const s of sorting) {
-            if (s.field.includes(".")) {
+            if (s?.field?.includes(".")) {
                 const modelName: keyof typeof models = s.field.split('.')[0];
                 const fieldId = s.field.split('.')[1];
                 const actualModel: any = models[modelName];
@@ -287,6 +289,8 @@ export async function getPaginationDataGridPro(options: { models: any, model: an
         limit: limit > 500 ? 500 : limit,
         where,
         include,
+        group,
+        ...options?.others,
     });
 
 
