@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "npx nodemon",
-    "build": "npx rimraf ./dist && npx tsc && npx copyfiles -u 2 -E -V ./src/assets/**/* ./dist/assets/"
+    "build": "npx rimraf ./dist && npx tsc && npx copyfiles -u 2 -E -V ./src/assets/**/* ./dist/assets/ && npx copyfiles -u 2 -E -V ./src/utils/mailer/templates/**/* ./dist/utils/"
   },
   "dependencies": {
     "compression": "^1.7.4",
