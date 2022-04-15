@@ -11,7 +11,7 @@ gulp.task('clean', function () {
 
 gulp.task('compile', function () {
     const tsProject = ts.createProject('tsconfig.json');
-    const tsResult = gulp.src('lib/**/*.ts').pipe(tsProject())
+    const tsResult = gulp.src('src/**/*.ts').pipe(tsProject())
 
     return tsResult.pipe(uglify()).pipe(gulp.dest('dist/'))
 });
