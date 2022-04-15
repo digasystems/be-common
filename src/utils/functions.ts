@@ -12,12 +12,6 @@ export const successResponse = (req: Request, res: Response, data?: any, code = 
 };
 
 export const errorResponse = (req: Request, res: Response, error: any = {}, options?: errOptions,) => {
-    mainLogger.error(`ERROR ${error?.code || 500} ${error?.name || ""} ${error?.message || ""}`);
-    if ((!error?.code && !options?.code) || error?.code == 500 || options?.code == 500) {
-        console.log(error, options) // winston sucks and does not display errors stack
-        mainLogger.error(error)
-        mainLogger.error(options)
-    }
     res?.status(options?.code || 500).json({
         code: options?.code || 500,
         message: options?.message || error?.message,

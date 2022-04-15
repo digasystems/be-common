@@ -9,7 +9,7 @@ const rotateQueriesLogsOptions = { filename: (path.join(process.cwd(), "./logs/"
 
 export const mainLogger = createLogger({
     format: format.combine(
-        format.errors({ stack: true }), 
+        format.errors({ stack: true }),
         format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
         format.align(),
         format.printf(info => `[${info.level}] ${[info.timestamp]}: ${info.message}`)
@@ -22,7 +22,7 @@ export const mainLogger = createLogger({
 
 export const importsLogger = createLogger({
     format: format.combine(
-        format.errors({ stack: true }), 
+        format.errors({ stack: true }),
         format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
         format.align(),
         format.printf(info => `[${info.level}] ${[info.timestamp]}: ${info.message}`)
@@ -46,7 +46,7 @@ export const actionsLogger = createLogger({
 
 export const queriesLogger = createLogger({
     format: format.combine(
-        format.errors({ stack: true }), 
+        format.errors({ stack: true }),
         format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
         format.align(),
         format.printf(info => `[${info.level}] ${[info.timestamp]}: ${info.message}`)

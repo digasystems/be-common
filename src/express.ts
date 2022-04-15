@@ -1,13 +1,13 @@
-import express, { Router } from "express";
 import compression from 'compression';
-import helmet from 'helmet';
 import cors from 'cors';
+import express, { Router } from "express";
+import helmet from 'helmet';
+import path from "path";
+import initializeDocs from "./docs";
+import { mainLogger } from "./logger";
 import errorHandler from "./middlewares/errorHandler";
 import noRoute from "./middlewares/noRoute";
 import { parseIp, successResponse } from "./utils/functions";
-import { mainLogger } from "./logger";
-import path from "path";
-import initializeDocs from "./docs";
 
 
 const env = process.env.NODE_ENV || "development";

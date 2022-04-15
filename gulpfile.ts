@@ -18,7 +18,7 @@ gulp.task('compile', function () {
 
 gulp.task('copy-assets', function () {
     return gulp.src(['src/assets/**/*'])
-        .pipe(gulp.dest('dist/src/assets'));
+        .pipe(gulp.dest('dist/assets'));
 })
 
 gulp.task('zip', function () {

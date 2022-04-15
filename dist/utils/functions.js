@@ -10,12 +10,6 @@ const successResponse = (req, res, data, code = 200) => {
 };
 exports.successResponse = successResponse;
 const errorResponse = (req, res, error = {}, options) => {
-    logger_1.mainLogger.error(`ERROR ${error?.code || 500} ${error?.name || ""} ${error?.message || ""}`);
-    if ((!error?.code && !options?.code) || error?.code == 500 || options?.code == 500) {
-        console.log(error, options);
-        logger_1.mainLogger.error(error);
-        logger_1.mainLogger.error(options);
-    }
     res?.status(options?.code || 500).json({
         code: options?.code || 500,
         message: options?.message || error?.message,
