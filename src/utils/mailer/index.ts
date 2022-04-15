@@ -1,5 +1,5 @@
-import nodemailer, { Transporter } from "nodemailer"
 import ejs from "ejs";
+import nodemailer, { Transporter } from "nodemailer";
 import { mainLogger } from "../../logger";
 
 const url = "//localhost:4200/verify";
@@ -58,7 +58,7 @@ export default class Mailer {
             let mailOptions = {
                 subject: emailSubject,
                 to: emailAddress,
-                from: '<noreply@digasystems.com>',
+                from: 'Diga Systems <noreply@digasystems.com>',
                 html: data,
             };
 
