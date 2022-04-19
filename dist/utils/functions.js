@@ -10,14 +10,35 @@ const successResponse = (req, res, data, code = 200) => {
 };
 exports.successResponse = successResponse;
 const errorResponse = (req, res, error = {}, options) => {
-    res?.status(options?.code || 500).json({
-        code: options?.code || 500,
-        message: options?.message || error?.message,
-        textCode: options?.textCode || error?.code,
-        data: options?.data || error?.data,
-        details: error?.details,
-        success: false,
-    });
+    let errorMessage = options?.message || error?.message || "Generic error";
+    let errorTextcode = options?.textCode || error?.code || "GENERIC_ERROR";
+    let errorCode = options?.code || 400;
+    let errorData = options?.data || error?.data;
+    let errorDetails = error?.details;
+    logger_1.mainLogger.error(error?.constructor?.name?.toLowerCase());
+    logger_1.mainLogger.error(error.stack);
+    switch (error?.constructor?.name?.toLowerCase()) {
+        case "queryfailederror":
+            errorMessage = "Query error";
+            errorTextcode = "QUERY_ERROR";
+            errorCode = 400;
+            break;
+        case "validation error":
+        case "validationerror":
+            const message = error?.details?.body ? error?.details?.body[0].message : "";
+            let messages = error?.errors?.map((e) => e?.field);
+            if (messages?.length && messages?.length > 1) {
+                messages = `${messages.join(', ')} are required fields`;
+            }
+            else {
+                messages = `${messages.join(', ')} is required field`;
+            }
+            errorMessage = "Validation Error: " + message + messages;
+            errorTextcode = "VALIDATION_ERROR";
+            errorCode = 400;
+            break;
+    }
+    res?.status(errorCode).json({ code: errorCode, message: errorMessage, textCode: errorTextcode, data: errorData, details: errorDetails, success: false, });
     return res?.send();
 };
 exports.errorResponse = errorResponse;

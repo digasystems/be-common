@@ -39,7 +39,7 @@ const initializeHttp = ({ httpPort, routers, httpServer, docs }: { httpPort: num
      *     description: Api main endpoint
      *     responses:
      *       200:
-     *         description: Returns a success repsonse
+     *         description: Returns a success response
      */
     app.all('/', (req, res) => successResponse(req, res, process.env.APP_NAME + " " + docs?.version));
 

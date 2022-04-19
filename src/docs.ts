@@ -1,5 +1,5 @@
-import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 
 export default function initializeDocs(app, { title, version, apis }) {
     const swaggerJsdocOptions: swaggerJsdoc.Options = {
@@ -13,6 +13,9 @@ export default function initializeDocs(app, { title, version, apis }) {
     const swaggerUioptions: swaggerUi.SwaggerUiOptions = {
         explorer: true,
         customCss: '.swagger-ui .topbar { display: none }',
+        swaggerOptions: {
+            persistAuthorization: true,
+        }
     }
 
     const openapiSpecification = swaggerJsdoc(swaggerJsdocOptions);
