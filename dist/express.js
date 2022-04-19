@@ -29,8 +29,7 @@ const initializeHttp = ({ httpPort, routers, httpServer, docs }) => {
     });
     exports.app.all('/', (req, res) => (0, functions_1.successResponse)(req, res, process.env.APP_NAME + " " + docs?.version));
     exports.app.use('/logs', express_1.default.static(path_1.default.join(__dirname, "./assets/html/")));
-    console.log(__filename);
-    (0, docs_1.default)(exports.app, { title: docs?.title || "test-title", version: docs?.version || "1.0.0", apis: [__filename, ...(docs?.apis || [])] });
+    (0, docs_1.default)(exports.app, { title: docs?.title || "test-title", version: docs?.version || "1.0.0", apis: docs.apis });
     routers.forEach((r) => {
         exports.app.use(...(r.middlewares || []), r.router);
     });
